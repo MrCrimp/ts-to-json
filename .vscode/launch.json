@@ -9,7 +9,10 @@
             "request": "launch",
             "name": "Debug current TypeScript file as Node program",
             "protocol": "inspector",
-            "args": ["${relativeFile}", "c:\\git\\webclient\\ui"],
+            "args": ["${relativeFile}", 
+                "${workspaceRoot}/../the-folder",
+                "${workspaceRoot}/../the-root/tsconfig.json"
+            ],
             "cwd": "${workspaceRoot}",
             "runtimeArgs": ["-r", "ts-node/register"],
             "internalConsoleOptions": "openOnSessionStart"

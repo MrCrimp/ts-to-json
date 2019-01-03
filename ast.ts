@@ -1,78 +1,91 @@
-import { componentNames } from "./component-resolver";
+import { componentNames } from "./file-resolvers";
 import { Project } from "ts-simple-ast";
 import { ResultBuilder } from "./result";
+import { Arguments } from './options';
+import * as mm from 'micromatch';
+
+const debug = false;
+const warn = (...msg) => debug && console.warn(msg);
+const log = (...msg) => debug && console.log(msg);
 
 export const getInterfaces = ({
   targetDirectory,
-  userExcludeFolders,
-  userTsConfigLocation
-}) => {
+  excludeFolders,
+  tsConfigPath,
+  interfaceNameFilter
+}: Arguments) => {
     
   const project = new Project({
-    tsConfigFilePath: userTsConfigLocation,
+    tsConfigFilePath: tsConfigPath,
     addFilesFromTsConfig: false
   });
 
   project.addExistingSourceFiles(`${targetDirectory}/**/*{.d.ts,.ts,.tsx}`);
 
+  //TODO: micromatch instead of excludeFolders
   const [folders, camelCased] = componentNames(
     targetDirectory,
-    userExcludeFolders
+    excludeFolders
   );
 
   const builder = new ResultBuilder();
 
   folders.forEach((folder, i) => {
+
     const sourcefile =
       project.getSourceFile(`${folder}.tsx`) ||
       project.getSourceFile(`${folder}.ts`);
+
     if (!sourcefile) {
-      console.log(folder, "not found");
+      //TODO: add incompatible to result
+      warn( `${folder}.ts* not found` );
       return;
     }
 
-    // TODO: micromatch
-    const props = sourcefile
+    const matchingInterfaces = sourcefile
       .getInterfaces()
-      .filter(x => x.getName() === `${camelCased[i]}Props`)[0];
+      .filter(x => mm.isMatch( x.getName(), interfaceNameFilter ) );
 
-    if (!props) {
+    if (!matchingInterfaces) {
       return;
     }
 
-    const map = props.getMembers().map(m => [
-      m.getSymbol().getName(),
-      m
-        .getJsDocs()
-        .map(doc => doc.compilerNode.comment)
-        .join("\n\n") //TODO: do not join
-    ]);
+    matchingInterfaces.forEach( match => {
 
-    const module = {
-        name: camelCased[i],
-        members: []
-    }
+      const map = match.getMembers().map(m => [
+        m.getSymbol().getName(),
+        m
+          .getJsDocs()
+          .map(doc => doc.compilerNode.comment)
+          .join("\n\n") 
+      ]);
 
-    console.group(camelCased[i]);
+      const module = {
+          name: camelCased[i],
+          members: []
+      }
 
-    map.forEach(member => {
-      const [name, docs] = member;
-      module.members.push({
-          [name]: docs,
-          documented: !!docs
+      map.forEach(member => {
+        const [name, docs] = member;
+        module.members.push({
+            [name]: docs,
+            documented: !!docs
+        });
+
+        //DEBUG
+        if (!docs) {
+          // TODO: check not private, and exported etc
+          warn("member", name, "needs documentation");
+        } else {
+          log(name, ": ", docs);
+        }
+        log("\n\n------------------------------------\n\n");
+
       });
 
-      if (!docs) {
-        // TODO: check not private, and exported etc
-        console.warn("member", name, "needs documentation");
-      } else {
-        console.log(name, ": ", docs);
-      }
-      console.log("\n\n------------------------------------\n\n");
+      builder.add(module);
     });
-    console.groupEnd();
 
-    builder.add(module);
   });
 
   return builder.result;
