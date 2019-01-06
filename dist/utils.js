@@ -6,4 +6,5 @@ exports.camelCased = (c) => (c
             c.replace(/-([a-z])/g, g => g[1].toUpperCase()).substr(1)
     :
         '');
+exports.getInterfaceName = (text) => text.match(/(?![export|interface]).(\w+).(?=\{+)/ig)[0];
 //# sourceMappingURL=utils.js.map

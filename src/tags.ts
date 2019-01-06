@@ -1,6 +1,6 @@
-import { TypeElementTypes } from 'ts-simple-ast';
+import { TypeElementTypes, InterfaceDeclaration } from 'ts-simple-ast';
 
-export const getMemberTags = (m:TypeElementTypes) => {
+export const getMemberTags = (m:TypeElementTypes | InterfaceDeclaration) => {
   const firstDoc = m.getJsDocs() && m.getJsDocs()[0];
   const tags = firstDoc ? firstDoc.getTags() : []
   //JsDoc tags are not expanded, just text lines, might need work

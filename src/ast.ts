@@ -31,15 +31,15 @@ export const getInterfaces = (
     
     log(sourcefile);
 
-    const matchingInterfaces = sourcefile.getInterfaces();
+    const interfacesInFile = sourcefile.getInterfaces();
 
-    if (!matchingInterfaces || !matchingInterfaces.length) {
+    if (!interfacesInFile || !interfacesInFile.length) {
       return;
     }
 
-    matchingInterfaces.forEach( match => {
+    interfacesInFile.forEach( $interface => {
 
-      const members = match.getMembers().map(m => [
+      const members = $interface.getMembers().map(m => [
 
         m.getSymbol().getName(),
 
@@ -48,9 +48,9 @@ export const getInterfaces = (
       ]);
 
       const module = {
-          name: match.getName(),
+          name: $interface.getName(),
           moduleName: moduleNames[i],
-          meta: getNodeInfo(match),
+          meta: getNodeInfo($interface),
           members: []
       }
 
@@ -64,8 +64,8 @@ export const getInterfaces = (
               __internal: (Array.isArray(docs) && 
               docs.length &&
               docs.some(d=>
-                d.tags.some(t=>t.name === '@internal') ||
-                d.tags.some(t=>t.name === '@private')
+                d.tags.some(t=>t.name === 'internal') ||
+                d.tags.some(t=>t.name === 'private')
               ))
           });
 

@@ -18,19 +18,19 @@ exports.getInterfaces = (project, folders, moduleNames) => {
             return;
         }
         log_2.log(sourcefile);
-        const matchingInterfaces = sourcefile.getInterfaces();
-        if (!matchingInterfaces || !matchingInterfaces.length) {
+        const interfacesInFile = sourcefile.getInterfaces();
+        if (!interfacesInFile || !interfacesInFile.length) {
             return;
         }
-        matchingInterfaces.forEach(match => {
-            const members = match.getMembers().map(m => [
+        interfacesInFile.forEach($interface => {
+            const members = $interface.getMembers().map(m => [
                 m.getSymbol().getName(),
                 nodes_1.getNodeInfo(m)
             ]);
             const module = {
-                name: match.getName(),
+                name: $interface.getName(),
                 moduleName: moduleNames[i],
-                meta: nodes_1.getNodeInfo(match),
+                meta: nodes_1.getNodeInfo($interface),
                 members: []
             };
             members
@@ -42,8 +42,8 @@ exports.getInterfaces = (project, folders, moduleNames) => {
                     __documented: !!docs.text,
                     __internal: (Array.isArray(docs) &&
                         docs.length &&
-                        docs.some(d => d.tags.some(t => t.name === '@internal') ||
-                            d.tags.some(t => t.name === '@private')))
+                        docs.some(d => d.tags.some(t => t.name === 'internal') ||
+                            d.tags.some(t => t.name === 'private')))
                 });
             });
             builder.add(module);

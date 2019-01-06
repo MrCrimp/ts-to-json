@@ -7,3 +7,5 @@ export const camelCased = (c: string) => (c
       ).substr(1) 
   : 
     '');  
+
+export const getInterfaceName = (text:string) => text.match(/(?![export|interface]).(\w+).(?=\{+)/ig)[0];
