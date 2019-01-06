@@ -1,14 +1,13 @@
 {
   "name": "ts-to-json",
   "version": "1.0.0",
-  "description": "Parse documented TypeScript interfaces as JSON",
-  "main": "parse",
+  "description": "Parse TypeScript interfaces as JSON",
+  "main": "ts-to-json",
   "bin": {
     "ts-to-json": "bin/ts-to-json"
   },
   "dependencies": {
     "micromatch": "^3.1.10",
-    "minimist": "^1.2.0",
     "ora": "^3.0.0",
     "ts-node": "^7.0.1",
     "ts-simple-ast": "^20.0.0"

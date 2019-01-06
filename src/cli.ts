@@ -1,11 +1,17 @@
 import * as spinner from 'ora';
+import * as fs from 'fs';
 import { parseInterfaces } from './interface-parser';
 import { inferOptions } from './options';
-import * as fs from 'fs';
 import { stringify } from './json';
 import { getProject, ProjectOptions } from './project';
+
 const terminal_line = '____________________________\n';
-export const showProgress = ()=> spinner('Working...').start();
+
+export const showProgress = ()=> {
+  console.clear();
+  console.log('\x1Bc');
+  return spinner('Working...').start();
+}
 
 const [
   targetDirectory, 
@@ -29,7 +35,7 @@ outfile && fs.writeFileSync(outfile, stringify(result));
 
 //TODO: chalk
 
-progress.succeed("Done.");
+progress.succeed('Done');
 
 console.log(outfile 
   ? 
