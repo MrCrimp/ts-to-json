@@ -10,8 +10,8 @@
             "name": "Debug current TypeScript file as Node program",
             "protocol": "inspector",
             "args": ["${workspaceRoot}/src/cli.ts", 
-                "${workspaceRoot}/../synergi-life-core-webclient/ui",
-                "${workspaceRoot}/../synergi-life-core-webclient/tsconfig.json",
+                "${workspaceRoot}/../app/ui",
+                "${workspaceRoot}/../app/tsconfig.json",
                 "./result.json",
                 "*Props"
             ],
