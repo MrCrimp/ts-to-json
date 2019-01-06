@@ -18,7 +18,7 @@
   },
   "scripts": {
     "start": "tsc && ts-node ./bin/ts-to-json",
-    "test": "npx ava"
+    "test": "npx ava --watch"
   },
   "ava": {
     "compileEnhancements": false,
