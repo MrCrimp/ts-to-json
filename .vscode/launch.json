@@ -9,9 +9,11 @@
             "request": "launch",
             "name": "Debug current TypeScript file as Node program",
             "protocol": "inspector",
-            "args": ["${relativeFile}", 
-                "${workspaceRoot}/../the-folder",
-                "${workspaceRoot}/../the-root/tsconfig.json"
+            "args": ["${workspaceRoot}/src/cli.ts", 
+                "${workspaceRoot}/../synergi-life-core-webclient/ui",
+                "${workspaceRoot}/../synergi-life-core-webclient/tsconfig.json",
+                "./result.json",
+                "*Props"
             ],
             "cwd": "${workspaceRoot}",
             "runtimeArgs": ["-r", "ts-node/register"],

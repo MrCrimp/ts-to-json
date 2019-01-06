@@ -18,7 +18,7 @@
     "ava": "^1.0.1"
   },
   "scripts": {
-    "start": "ts-node ./bin/ts-to-json.ts",
+    "start": "tsc && ts-node ./bin/ts-to-json",
     "test": "npx ava"
   },
   "ava": {

@@ -2,12 +2,11 @@
 const DEFAULT_EXCLUDE = [
   "__tests__", 
   "__mocks__",
-  "node_modules",
-  "bin"
+  "node_modules"
 ];
 
 export interface Arguments{
-  targetDirectory: string;
+  targetDirectory?: string;
   excludeFolders?: string[];
   tsConfigPath?:string;
   interfaceNameFilter?: string[];

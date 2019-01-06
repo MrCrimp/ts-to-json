@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
-var fs = require("fs");
-exports.validateFolder = function (path) { return fs.statSync(path).isDirectory(); };
+Object.defineProperty(exports, "__esModule", { value: true });
+const fs = require("fs");
+exports.validateFolder = path => fs.statSync(path).isDirectory();
 //# sourceMappingURL=validate.js.map

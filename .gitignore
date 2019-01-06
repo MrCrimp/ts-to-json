@@ -21,7 +21,6 @@ appsettings.development.local.json
 [Xx]86/
 [Bb]uild/
 bld/
-[Bb]in/
 [Oo]bj/
 
 # WebStorm files
@@ -268,3 +267,8 @@ cobertura-coverage.xml
 # Database backups
 *.[bB]ak
 *.BAK
+
+# Project local
+result.json
+.vscode/launch.json
+.vscode/settings.json

@@ -1,61 +1,53 @@
 "use strict";
-exports.__esModule = true;
-var component_resolver_1 = require("./component-resolver");
-var ts_simple_ast_1 = require("ts-simple-ast");
-var result_1 = require("./result");
-exports.getInterfaces = function (_a) {
-    var targetDirectory = _a.targetDirectory, userExcludeFolders = _a.userExcludeFolders, userTsConfigLocation = _a.userTsConfigLocation;
-    var project = new ts_simple_ast_1.Project({
-        tsConfigFilePath: userTsConfigLocation,
-        addFilesFromTsConfig: false
-    });
-    project.addExistingSourceFiles(targetDirectory + "/**/*{.d.ts,.ts,.tsx}");
-    var _b = component_resolver_1.componentNames(targetDirectory, userExcludeFolders), folders = _b[0], camelCased = _b[1];
-    var builder = new result_1.ResultBuilder();
-    folders.forEach(function (folder, i) {
-        var sourcefile = project.getSourceFile(folder + ".tsx") ||
-            project.getSourceFile(folder + ".ts");
+Object.defineProperty(exports, "__esModule", { value: true });
+const result_1 = require("./result");
+const log_1 = require("./log");
+const log_2 = require("./log");
+const nodes_1 = require("./nodes");
+exports.getInterfaces = (project, folders, moduleNames) => {
+    //TODO: module.{sourcefile, folder, name}
+    const builder = new result_1.ResultBuilder();
+    //TODO Move file concerns out
+    folders.forEach((folder, i) => {
+        //const sourcefile = sourceFiles[i];
+        const sourcefile = project.getSourceFile(`${folder}.tsx`) ||
+            project.getSourceFile(`${folder}.ts`);
         if (!sourcefile) {
-            console.log(folder, "not found");
+            //TODO: add incompatible to result
+            log_1.warn(`${folder}.ts* not found`);
             return;
         }
-        // TODO: micromatch
-        var props = sourcefile
-            .getInterfaces()
-            .filter(function (x) { return x.getName() === camelCased[i] + "Props"; })[0];
-        if (!props) {
+        log_2.log(sourcefile);
+        const matchingInterfaces = sourcefile.getInterfaces();
+        if (!matchingInterfaces || !matchingInterfaces.length) {
             return;
         }
-        var map = props.getMembers().map(function (m) { return [
-            m.getSymbol().getName(),
-            m
-                .getJsDocs()
-                .map(function (doc) { return doc.compilerNode.comment; })
-                .join("\n\n") //TODO: do not join
-        ]; });
-        var module = {
-            name: camelCased[i],
-            members: []
-        };
-        console.group(camelCased[i]);
-        map.forEach(function (member) {
-            var _a;
-            var name = member[0], docs = member[1];
-            module.members.push((_a = {},
-                _a[name] = docs,
-                _a.documented = !!docs,
-                _a));
-            if (!docs) {
-                // TODO: check not private, and exported etc
-                console.warn("member", name, "needs documentation");
-            }
-            else {
-                console.log(name, ": ", docs);
-            }
-            console.log("\n\n------------------------------------\n\n");
+        matchingInterfaces.forEach(match => {
+            const members = match.getMembers().map(m => [
+                m.getSymbol().getName(),
+                nodes_1.getNodeInfo(m)
+            ]);
+            const module = {
+                name: match.getName(),
+                moduleName: moduleNames[i],
+                meta: nodes_1.getNodeInfo(match),
+                members: []
+            };
+            members
+                .forEach(member => {
+                const [name, docs] = member;
+                module.members.push({
+                    name,
+                    meta: docs,
+                    __documented: !!docs.text,
+                    __internal: (Array.isArray(docs) &&
+                        docs.length &&
+                        docs.some(d => d.tags.some(t => t.name === '@internal') ||
+                            d.tags.some(t => t.name === '@private')))
+                });
+            });
+            builder.add(module);
         });
-        console.groupEnd();
-        builder.add(module);
     });
     return builder.result;
 };

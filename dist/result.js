@@ -1,14 +1,12 @@
 "use strict";
-exports.__esModule = true;
-var ResultBuilder = /** @class */ (function () {
-    function ResultBuilder() {
-        var _this = this;
+Object.defineProperty(exports, "__esModule", { value: true });
+class ResultBuilder {
+    constructor() {
         this.result = [];
-        this.add = function (item) {
-            _this.result.push(item);
+        this.add = (item) => {
+            this.result.push(item);
         };
     }
-    return ResultBuilder;
-}());
+}
 exports.ResultBuilder = ResultBuilder;
 //# sourceMappingURL=result.js.map
