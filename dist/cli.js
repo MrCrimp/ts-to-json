@@ -21,7 +21,13 @@ const options = options_1.inferOptions({
 const project = project_1.getProject(options);
 const result = interface_parser_1.parseInterfaces(project, options);
 outfile && fs.writeFileSync(outfile, json_1.stringify(result));
-//TODO: chalk
+if (!result || !result.length) {
+    progress.fail('Result contained no entries. This might be caused by a invalid target folder.');
+    console.log(terminal_line);
+    console.error('### Current arguments: ###\n', JSON.stringify(options, null, 3));
+    console.log(terminal_line);
+    process.exit(1);
+}
 progress.succeed('Done');
 console.log(outfile
     ?
